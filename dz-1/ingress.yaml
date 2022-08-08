@@ -7,7 +7,7 @@ spec:
   ingressClassName: nginx
   rules:
     - host: arch.homework
-    - http:
+      http:
         paths:
           - path: /health
             pathType: Prefix
@@ -29,7 +29,7 @@ spec:
   ingressClassName: nginx
   rules:
     - host: arch.homework
-    - http:
+      http:
         paths:
           - path: /otusapp/(.*)
             pathType: Prefix
