@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otus-app-deployment
+  namespace: otus-dz-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otus-app
+  template:
+    metadata:
+      labels:
+        app: otus-app
+    spec:
+      containers:
+        - name: otus-app
+          image: gubanovss/otus-app:dz-2
+          imagePullPolicy: Always
+          env:
+            - name: BUILTIN_ADMIN_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: builtin-admin-password
+                  optional: true
+            - name: DATA_SOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: data-source-url
+                  optional: true
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: db-username
+                  optional: true
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+
+          ports:
+            - name: web
+              containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            failureThreshold: 60
+            periodSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 3
+            periodSeconds: 3
+
+
