@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otus-app-deployment
+  namespace: otus-dz-3
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otus-app
+  template:
+    metadata:
+      #annotations:
+      #  prometheus.io/scrape: "true"
+      #  prometheus.io/port: "metrics"
+      #  prometheus.io/path: "/actuator/prometheus"
+      labels:
+        app: otus-app
+    spec:
+      containers:
+        - name: otus-app
+          image: gubanovss/otus-app:dz-3
+          imagePullPolicy: Always
+          env:
+            - name: BUILTIN_ADMIN_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: builtin-admin-password
+                  optional: true
+            - name: DATA_SOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: data-source-url
+                  optional: true
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: db-username
+                  optional: true
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: PERCENT_500_ERROR
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: percent-500-error
+                  optional: true
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: metrics
+              containerPort: 8081
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            failureThreshold: 60
+            periodSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 3
+            periodSeconds: 3
+
+

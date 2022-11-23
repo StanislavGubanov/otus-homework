@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+  namespace: otus-dz-3
+data:
+  builtin-admin-password: admin321
+  data-source-url: jdbc:postgresql://my-release-postgresql:5432/otus-users-db
+  db-username: otus_user
+  percent-500-error: "15"
+#  db-password: secret
+

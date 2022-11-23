@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: otus-app-service-monitor
+  namespace: otus-dz-3
+  labels:
+    app: otus-app
+    serviceMonitorSelector: prometheus
+    release: my-monitoring
+spec:
+  selector:
+    matchLabels:
+      app: otus-app
+  namespaceSelector:
+    matchNames:
+      - otus-dz-3
+  endpoints:
+    - port: metrics
+      interval: 5s
+      path: /actuator/prometheus
