@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otus-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otus-app
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: otus-app
+        version: v1
+    spec:
+      containers:
+        - name: otus-app
+          image: gubanovss/otus-app:dz-4.1
+          imagePullPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otus-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otus-app
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: otus-app
+        version: v2
+    spec:
+      containers:
+        - name: otus-app
+          image: gubanovss/otus-app:dz-4.2
+          imagePullPolicy: Always
